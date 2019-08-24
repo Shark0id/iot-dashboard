@@ -33,33 +33,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from django.forms import ModelForm
+from django import template
+from iotdashboard.settings import WEBSITE_NAME
+import time
+import os
 
-from devices.models import Device
+
+register = template.Library()
 
 
-class DeviceForm(ModelForm):
-    required_css_class = 'required'
-    class Meta:
-        model = Device
-        fields = [
-            'name',
-            'description',
-            'field_1',
-            'field_2',
-            'field_3',
-            'field_4',
-            'field_5',
-            'field_6',
-            'field_7',
-            'field_8',
-            'field_9',
-            'field_10',
-            'enable',
-        ]
+@register.simple_tag
+def version():
+    """
+        GIT version
+    """
+    try:
+        return time.strftime('%m%d%Y/%u', time.gmtime(os.path.getmtime('.git/')))
+    except:
+        return 0
 
-    def __init__(self, *args, **kwargs):
-        super(DeviceForm, self).__init__(*args, **kwargs)
-        for i in self.fields:
-            if i not in ['enable']:
-                self.fields[i].widget.attrs['class'] = 'form-control'
+
+@register.simple_tag
+def website_name():
+    """
+        WEBSITE_NAME = "Iotdashboard"
+    """
+    return WEBSITE_NAME
